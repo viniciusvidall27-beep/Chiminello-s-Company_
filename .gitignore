@@ -1,0 +1,13 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+data/
+*.json
+!requirements.txt
+.DS_Store
+*.egg-info/
+dist/
+build/
+.netlify/

@@ -1,0 +1,23 @@
+# ══════════════════════════════════════════════════════════════
+#  netlify.toml — Chiminello
+#  O Netlify não suporta Python/Flask diretamente.
+#  Esta config usa o plugin netlify-plugin-flask (via functions)
+#  OU pode usar o Render.com (recomendado para Flask).
+# ══════════════════════════════════════════════════════════════
+
+[build]
+  command   = "pip install -r requirements.txt"
+  publish   = "static"
+  functions = "netlify/functions"
+
+[build.environment]
+  PYTHON_VERSION = "3.11"
+
+[[redirects]]
+  from   = "/*"
+  to     = "/.netlify/functions/app"
+  status = 200
+
+[functions]
+  external_node_modules = []
+  node_bundler          = "esbuild"

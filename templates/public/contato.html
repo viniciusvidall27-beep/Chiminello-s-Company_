@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Contato — Chiminello{% endblock %}
+{% block body %}
+<div id="toast"></div>
+<nav class="pub-nav">
+  <a href="/">🏠 Home</a>
+  <a href="/historia">📖 História</a>
+  <a href="/produtos">🧱 Produtos</a>
+  <a href="/contato" class="active">📬 Contato</a>
+  <a href="/admin" class="nav-admin">🔐 Admin</a>
+</nav>
+
+<div class="page-header">
+  <h1>📬 Fale Conosco</h1>
+  <p>Respondemos em até 24 horas úteis</p>
+</div>
+
+<div class="section">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px">
+
+    <!-- Formulário -->
+    <div class="form-card">
+      <h2 style="font-size:1.3em;color:var(--brick);margin-bottom:4px">✉️ Enviar Mensagem</h2>
+      <p style="color:#888;font-size:.85em;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid var(--cream-dark)">Preencha o formulário abaixo</p>
+      <div class="fg"><label>Nome Completo *</label><input id="c-nome" type="text" placeholder="Seu nome completo"></div>
+      <div class="fg"><label>E-mail *</label><input id="c-email" type="email" placeholder="seu@email.com"></div>
+      <div class="fg"><label>Telefone / WhatsApp</label><input id="c-tel" type="tel" placeholder="(41) 00000-0000"></div>
+      <div class="fg"><label>Mensagem *</label><textarea id="c-msg" placeholder="Descreva sua necessidade, pedido de orçamento ou dúvida..."></textarea></div>
+      <button class="btn btn-primary btn-full" onclick="enviar()">📤 Enviar Mensagem</button>
+    </div>
+
+    <!-- Informações reais da empresa -->
+    <div style="background:#2c1810;border-radius:var(--radius);padding:28px;color:#fff">
+      <h2 style="font-family:'Playfair Display',serif;color:var(--brick-light);font-size:1.3em;margin-bottom:4px">📍 Nosso Contato</h2>
+      <p style="color:rgba(255,255,255,.55);font-size:.85em;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.1)">Estamos à disposição</p>
+
+      <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:16px;padding:14px;background:rgba(255,255,255,.06);border-radius:10px;border-left:3px solid var(--brick-light)">
+        <span style="font-size:1.4em;flex-shrink:0">📍</span>
+        <div>
+          <div style="font-size:.72em;text-transform:uppercase;color:var(--brick-light);font-weight:700;letter-spacing:.4px;margin-bottom:4px">Endereço</div>
+          <div style="color:rgba(255,255,255,.88);font-size:.9em;line-height:1.6">Rua Ernesto Antônio Chiminello, 191<br>Curitiba — PR</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:16px;padding:14px;background:rgba(255,255,255,.06);border-radius:10px;border-left:3px solid var(--brick-light)">
+        <span style="font-size:1.4em;flex-shrink:0">📞</span>
+        <div>
+          <div style="font-size:.72em;text-transform:uppercase;color:var(--brick-light);font-weight:700;letter-spacing:.4px;margin-bottom:4px">Telefone</div>
+          <div style="color:rgba(255,255,255,.88);font-size:.9em;line-height:1.6">(41) 3348-1123</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:16px;padding:14px;background:rgba(255,255,255,.06);border-radius:10px;border-left:3px solid var(--brick-light)">
+        <span style="font-size:1.4em;flex-shrink:0">✉️</span>
+        <div>
+          <div style="font-size:.72em;text-transform:uppercase;color:var(--brick-light);font-weight:700;letter-spacing:.4px;margin-bottom:4px">E-mail</div>
+          <div style="color:rgba(255,255,255,.88);font-size:.9em;line-height:1.6">tijoloschiminello@yahoo.com.br</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:20px;padding:14px;background:rgba(255,255,255,.06);border-radius:10px;border-left:3px solid var(--brick-light)">
+        <span style="font-size:1.4em;flex-shrink:0">🕐</span>
+        <div>
+          <div style="font-size:.72em;text-transform:uppercase;color:var(--brick-light);font-weight:700;letter-spacing:.4px;margin-bottom:4px">Horário de Atendimento</div>
+          <div style="color:rgba(255,255,255,.88);font-size:.9em;line-height:1.6">Seg–Sex: 07h às 17h<br>Sábado: 07h às 12h</div>
+        </div>
+      </div>
+
+      <a href="https://wa.me/5541933481123" target="_blank" class="btn btn-success btn-full" style="margin-top:4px">
+        💬 Chamar no WhatsApp
+      </a>
+
+      <a href="mailto:tijoloschiminello@yahoo.com.br" class="btn btn-gray btn-full" style="margin-top:10px">
+        ✉️ Enviar E-mail Direto
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<footer class="site-footer">
+  <p>© 2025 <span>Indústrias de Tijolos Chiminello</span> — Todos os direitos reservados</p>
+</footer>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function enviar() {
+  const n = document.getElementById('c-nome').value.trim();
+  const e = document.getElementById('c-email').value.trim();
+  const m = document.getElementById('c-msg').value.trim();
+  if (!n || !e || !m) { toast('⚠️ Preencha os campos obrigatórios!', 'warn'); return; }
+  try {
+    await api('/api/contato', {
+      method: 'POST',
+      body: { nome: n, email: e, telefone: document.getElementById('c-tel').value, mensagem: m }
+    });
+    toast('✅ Mensagem enviada! Retornaremos em breve.');
+    ['c-nome','c-email','c-tel','c-msg'].forEach(i => document.getElementById(i).value = '');
+  } catch(err) { toast('❌ Erro ao enviar: ' + err.message, 'err'); }
+}
+</script>
+{% endblock %}

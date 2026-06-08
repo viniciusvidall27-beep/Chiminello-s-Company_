@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block title %}Estoque — Admin Chiminello{% endblock %}
+{% block body_class %}adm{% endblock %}
+{% block body %}
+<div id="toast"></div>
+<nav class="adm-nav">
+  <a href="/">🏠 Site</a>
+  <a href="/admin/clientes">👥 Clientes</a>
+  <a href="/admin/estoque" class="active">📦 Estoque</a>
+  <a href="/admin/seguranca">🛡️ Segurança</a>
+  <span class="ml"><button class="logout-btn" onclick="logout()">⏻ Sair</button></span>
+</nav>
+<div class="adm-header">
+  <div><h2>📦 Gerenciamento de Estoque</h2><div class="meta">Controle entradas, saídas e monitore os níveis dos produtos</div></div>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi-card kpi-ok"><div class="kpi-num" id="d-total">0</div><div class="kpi-lbl">Total Produtos</div></div>
+  <div class="kpi-card kpi-warn"><div class="kpi-num" id="d-baixo">0</div><div class="kpi-lbl">Estoque Baixo</div></div>
+  <div class="kpi-card kpi-danger"><div class="kpi-num" id="d-zero">0</div><div class="kpi-lbl">Sem Estoque</div></div>
+  <div class="kpi-card kpi-info"><div class="kpi-num" id="d-pecas">0k</div><div class="kpi-lbl">Total Peças</div></div>
+</div>
+
+<div style="background:#fff;border-left:4px solid var(--brick-light);margin:0 16px 16px;border-radius:0 var(--radius) var(--radius) 0;padding:22px;box-shadow:var(--shadow)">
+  <h3 id="f-titulo" style="font-family:'Playfair Display',serif;color:var(--brick);margin-bottom:16px;font-size:1.05em">➕ Cadastrar Produto / Movimentação</h3>
+  <div class="form-grid">
+    <div class="fg"><label>Código</label><input id="e-cod" placeholder="Ex: CHI-001"></div>
+    <div class="fg"><label>Nome do Produto *</label><input id="e-nome" placeholder="Ex: Tijolo Baiano"></div>
+    <div class="fg"><label>Categoria</label>
+      <select id="e-cat">
+        <option>Tijolo Comum</option><option>Tijolo Especial</option>
+        <option>Tijolo Estrutural</option><option>Subproduto</option><option>Material</option>
+      </select>
+    </div>
+    <div class="fg"><label>Quantidade *</label><input id="e-qtd" type="number" min="0" placeholder="0"></div>
+    <div class="fg"><label>Observação</label><input id="e-obs" placeholder="Nota opcional"></div>
+  </div>
+  <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px;padding-top:14px;border-top:1px solid var(--cream-dark);flex-wrap:wrap">
+    <button class="btn btn-gray"    onclick="cancelar()">✕ Cancelar</button>
+    <button class="btn btn-primary" onclick="mov('cadastro')">💾 Cadastrar</button>
+    <button class="btn btn-success" onclick="mov('entrada')">📥 + Entrada</button>
+    <button class="btn btn-danger"  onclick="mov('saida')">📤 − Saída</button>
+  </div>
+</div>
+
+<div style="margin:0 16px 16px">
+  <div class="table-wrap">
+    <div class="table-head">
+      <h3>📊 Produtos em Estoque</h3>
+      <span id="est-count" style="background:rgba(210,105,30,.25);color:var(--brick-light);padding:3px 10px;border-radius:10px;font-size:.82em">0 produtos</span>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="tbl">
+        <thead><tr><th>Código</th><th>Produto</th><th>Categoria</th><th>Quantidade</th><th>Ult. Movim.</th><th>Status</th><th>Ações</th></tr></thead>
+        <tbody id="est-tbody"><tr><td colspan="7" class="tbl-empty">Carregando...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+let estoque = [];
+
+async function carregar() {
+  try {
+    estoque = await api('/api/estoque');
+    renderEst(estoque);
+  } catch(e) { if (e.message.includes('401')) window.location.href = '/admin/login'; }
+}
+
+function renderEst(lista) {
+  const low   = lista.filter(p => p.qtd > 0 && p.qtd <= 100).length;
+  const zero  = lista.filter(p => p.qtd <= 0).length;
+  const total = lista.reduce((a, p) => a + Number(p.qtd || 0), 0);
+  document.getElementById('d-total').textContent = lista.length;
+  document.getElementById('d-baixo').textContent = low;
+  document.getElementById('d-zero').textContent  = zero;
+  document.getElementById('d-pecas').textContent = (total / 1000).toFixed(1) + 'k';
+  document.getElementById('est-count').textContent = lista.length + ' produtos';
+  const tb = document.getElementById('est-tbody');
+  if (!lista.length) { tb.innerHTML = '<tr><td colspan="7" class="tbl-empty">Nenhum produto cadastrado.</td></tr>'; return; }
+  tb.innerHTML = lista.map(p => {
+    const s = p.qtd <= 0 ? '<span class="badge badge-danger">Zerado</span>'
+            : p.qtd <= 100 ? '<span class="badge badge-warn">Baixo</span>'
+            : '<span class="badge badge-ok">Normal</span>';
+    return `<tr>
+      <td><strong>${p.codigo}</strong></td>
+      <td>${p.nome}</td><td>${p.categoria}</td>
+      <td><strong>${Number(p.qtd).toLocaleString('pt-BR')}</strong></td>
+      <td>${p.movim||'—'}</td><td>${s}</td>
+      <td>
+        <button class="btn btn-primary btn-sm" onclick="editarP('${p.codigo}')">✏️</button>
+        <button class="btn btn-danger  btn-sm" onclick="excluirP('${p.codigo}')">🗑️</button>
+      </td></tr>`;
+  }).join('');
+}
+
+async function mov(tipo) {
+  const n = document.getElementById('e-nome').value.trim();
+  const q = Number(document.getElementById('e-qtd').value);
+  if (!n) { toast('⚠️ Nome do produto é obrigatório!', 'warn'); return; }
+  if (tipo !== 'cadastro' && !q) { toast('⚠️ Informe a quantidade!', 'warn'); return; }
+  try {
+    await api('/api/estoque', { method: 'POST', body: {
+      tipo,
+      produto: { codigo: document.getElementById('e-cod').value, nome: n, categoria: document.getElementById('e-cat').value, qtd: q, obs: document.getElementById('e-obs').value }
+    }});
+    toast(tipo === 'entrada' ? '📥 Entrada registrada!' : tipo === 'saida' ? '📤 Saída registrada!' : '💾 Produto salvo!');
+    cancelar(); carregar();
+  } catch(e) { toast('❌ Erro: ' + e.message, 'err'); }
+}
+
+function editarP(cod) {
+  const p = estoque.find(x => x.codigo === cod); if (!p) return;
+  document.getElementById('e-cod').value  = p.codigo;
+  document.getElementById('e-nome').value = p.nome;
+  document.getElementById('e-cat').value  = p.categoria;
+  document.getElementById('e-qtd').value  = p.qtd;
+  document.getElementById('f-titulo').textContent = '✏️ Editando: ' + p.nome;
+}
+
+async function excluirP(cod) {
+  if (!confirm('Excluir produto?')) return;
+  try { await api(`/api/estoque/${encodeURIComponent(cod)}`, { method: 'DELETE' }); toast('🗑️ Produto removido.'); carregar(); }
+  catch(e) { toast('❌ Erro: ' + e.message, 'err'); }
+}
+
+function cancelar() {
+  ['e-cod','e-nome','e-qtd','e-obs'].forEach(i => document.getElementById(i).value = '');
+  document.getElementById('e-cat').selectedIndex = 0;
+  document.getElementById('f-titulo').textContent = '➕ Cadastrar Produto / Movimentação';
+}
+
+carregar();
+</script>
+{% endblock %}

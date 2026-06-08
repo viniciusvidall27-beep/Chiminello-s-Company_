@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block title %}Clientes — Admin Chiminello{% endblock %}
+{% block body_class %}adm{% endblock %}
+{% block body %}
+<div id="toast"></div>
+<nav class="adm-nav">
+  <a href="/">🏠 Site</a>
+  <a href="/admin/clientes" class="active">👥 Clientes</a>
+  <a href="/admin/estoque">📦 Estoque</a>
+  <a href="/admin/seguranca">🛡️ Segurança</a>
+  <span class="ml"><button class="logout-btn" onclick="logout()">⏻ Sair</button></span>
+</nav>
+<div class="adm-header">
+  <div><h2>👥 Gerenciamento de Clientes</h2><div class="meta">Cadastre, edite e gerencie os clientes da empresa</div></div>
+</div>
+
+<div class="toolbar">
+  <input class="toolbar-search" id="busca" type="text" placeholder="🔍 Buscar por nome, CPF/CNPJ ou e-mail..." oninput="filtrar()">
+  <button class="btn btn-primary" onclick="novoForm()">➕ Novo Cliente</button>
+</div>
+
+<!-- Formulário -->
+<div id="form-section" style="background:#fff;border-left:4px solid var(--brick-light);margin:16px;border-radius:0 var(--radius) var(--radius) 0;padding:22px;box-shadow:var(--shadow)">
+  <h3 id="form-titulo" style="font-family:'Playfair Display',serif;color:var(--brick);margin-bottom:16px;font-size:1.05em">➕ Cadastrar Novo Cliente</h3>
+  <div class="form-grid">
+    <div class="fg"><label>ID</label><input id="f-id" readonly placeholder="Automático"></div>
+    <div class="fg"><label>Nome Completo *</label><input id="f-nome" placeholder="Nome do cliente"></div>
+    <div class="fg"><label>CPF / CNPJ *</label><input id="f-cpf" placeholder="000.000.000-00"></div>
+    <div class="fg"><label>Telefone</label><input id="f-tel" placeholder="(00) 00000-0000"></div>
+    <div class="fg"><label>E-mail</label><input id="f-email" placeholder="email@dominio.com"></div>
+    <div class="fg"><label>Endereço Completo</label><input id="f-end" placeholder="Rua, nº, cidade, estado"></div>
+  </div>
+  <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px;padding-top:14px;border-top:1px solid var(--cream-dark)">
+    <button class="btn btn-gray" onclick="cancelarForm()">✕ Cancelar</button>
+    <button class="btn btn-primary" onclick="salvar()">💾 Salvar Cliente</button>
+  </div>
+</div>
+
+<!-- Tabela -->
+<div style="margin:0 16px 16px">
+  <div class="table-wrap">
+    <div class="table-head">
+      <h3>📋 Clientes Cadastrados</h3>
+      <span id="total-lbl" style="background:rgba(210,105,30,.25);color:var(--brick-light);padding:3px 10px;border-radius:10px;font-size:.82em">0 registros</span>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="tbl">
+        <thead><tr><th>ID</th><th>Nome</th><th>CPF/CNPJ</th><th>Telefone</th><th>E-mail</th><th>Cadastro</th><th>Status</th><th>Ações</th></tr></thead>
+        <tbody id="tbody"><tr><td colspan="8" class="tbl-empty">Carregando...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+let clientes = [], editId = null;
+
+async function carregar() {
+  try {
+    clientes = await api('/api/clientes');
+    renderTabela(clientes);
+  } catch(e) { 
+    if (e.message.includes('401')) window.location.href = '/admin/login';
+  }
+}
+
+function filtrar() {
+  const q = document.getElementById('busca').value.toLowerCase();
+  renderTabela(clientes.filter(c =>
+    (c.nome||'').toLowerCase().includes(q) ||
+    (c.cpf||'').includes(q) ||
+    (c.email||'').toLowerCase().includes(q)
+  ));
+}
+
+function renderTabela(lista) {
+  const tb = document.getElementById('tbody');
+  document.getElementById('total-lbl').textContent = lista.length + ' registro' + (lista.length !== 1 ? 's' : '');
+  if (!lista.length) { tb.innerHTML = '<tr><td colspan="8" class="tbl-empty">Nenhum cliente encontrado.</td></tr>'; return; }
+  tb.innerHTML = lista.map(c => `
+    <tr>
+      <td><strong>#${c.id}</strong></td>
+      <td>${c.nome}</td><td>${c.cpf}</td>
+      <td>${c.telefone||'—'}</td><td>${c.email||'—'}</td><td>${c.data||'—'}</td>
+      <td><span class="badge badge-ok">✓ Ativo</span></td>
+      <td>
+        <button class="btn btn-primary btn-sm" onclick="editar(${c.id})">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="excluir(${c.id})">🗑️</button>
+      </td>
+    </tr>`).join('');
+}
+
+async function salvar() {
+  const n = document.getElementById('f-nome').value.trim();
+  const c = document.getElementById('f-cpf').value.trim();
+  if (!n || !c) { toast('⚠️ Nome e CPF/CNPJ são obrigatórios!', 'warn'); return; }
+  const body = { nome: n, cpf: c, telefone: document.getElementById('f-tel').value, email: document.getElementById('f-email').value, endereco: document.getElementById('f-end').value };
+  try {
+    if (editId) { await api(`/api/clientes/${editId}`, { method: 'PUT', body }); toast('✅ Cliente atualizado!'); }
+    else        { await api('/api/clientes', { method: 'POST', body }); toast('✅ Cliente cadastrado!'); }
+    cancelarForm(); carregar();
+  } catch(e) { toast('❌ Erro: ' + e.message, 'err'); }
+}
+
+function editar(id) {
+  const c = clientes.find(x => x.id == id); if (!c) return;
+  editId = id;
+  document.getElementById('f-id').value    = '#' + c.id;
+  document.getElementById('f-nome').value  = c.nome;
+  document.getElementById('f-cpf').value   = c.cpf;
+  document.getElementById('f-tel').value   = c.telefone || '';
+  document.getElementById('f-email').value = c.email || '';
+  document.getElementById('f-end').value   = c.endereco || '';
+  document.getElementById('form-titulo').textContent = '✏️ Editando: ' + c.nome;
+  document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function excluir(id) {
+  if (!confirm('Confirmar exclusão do cliente?')) return;
+  try { await api(`/api/clientes/${id}`, { method: 'DELETE' }); toast('🗑️ Cliente removido.'); carregar(); }
+  catch(e) { toast('❌ Erro: ' + e.message, 'err'); }
+}
+
+function novoForm() { cancelarForm(); document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' }); }
+
+function cancelarForm() {
+  editId = null;
+  ['f-id','f-nome','f-cpf','f-tel','f-email','f-end'].forEach(i => document.getElementById(i).value = '');
+  document.getElementById('form-titulo').textContent = '➕ Cadastrar Novo Cliente';
+}
+
+carregar();
+</script>
+{% endblock %}

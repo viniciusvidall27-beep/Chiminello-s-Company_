@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Login — Admin Chiminello{% endblock %}
+{% block body_class %}adm{% endblock %}
+{% block extra_css %}
+<style>
+body.adm { background: #0d0704; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.login-card { background: #fff; border-radius: 18px; padding: 44px; width: 100%; max-width: 440px; box-shadow: 0 28px 80px rgba(0,0,0,.55); }
+.logo-area { text-align: center; margin-bottom: 30px; }
+.logo-area .icon { font-size: 54px; display: block; margin-bottom: 10px; animation: float 3s ease-in-out infinite; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+.logo-area h2 { font-size: 1.55em; color: var(--brick); }
+.logo-area p  { color: #888; font-size: .85em; margin-top: 5px; }
+.divider { display: flex; align-items: center; gap: 12px; margin: 18px 0; }
+.divider::before,.divider::after { content:''; flex:1; height:1px; background:var(--cream-dark); }
+.divider span { font-size: .75em; color: #aaa; text-transform: uppercase; letter-spacing: .8px; }
+.hint-box { background: #fef9f5; border: 1px solid var(--cream-dark); border-radius: 9px; padding: 13px 16px; font-size: .8em; color: var(--brick); text-align: center; }
+.hint-box strong { display: block; margin-bottom: 5px; color: var(--text-mid); }
+.sec-badges { display: flex; gap: 8px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+.sec-badge { background: var(--cream); color: var(--brick); padding: 5px 12px; border-radius: 12px; font-size: .73em; font-weight: 600; }
+</style>
+{% endblock %}
+{% block body %}
+<div id="toast"></div>
+<div class="login-card">
+  <div class="logo-area">
+    <span class="icon">🔐</span>
+    <h2>Área Administrativa</h2>
+    <p>Indústrias de Tijolos Chiminello</p>
+  </div>
+  <div class="fg"><label>👤 Usuário</label><input id="l-user" type="text" placeholder="Digite seu usuário" autocomplete="username"></div>
+  <div class="fg"><label>🔒 Senha</label><input id="l-pass" type="password" placeholder="Digite sua senha" autocomplete="current-password" onkeydown="if(event.key==='Enter')login()"></div>
+  <button class="btn btn-primary btn-full" onclick="login()" style="margin-top:4px">🔓 Entrar no Sistema</button>
+  <div class="divider"><span>segurança</span></div>
+  <div class="hint-box">
+    <strong>Credenciais padrão de acesso</strong>
+    Usuário: <code>admin</code> &nbsp;|&nbsp; Senha: <code>admin123</code>
+  </div>
+  <div class="sec-badges">
+    <span class="sec-badge">🛡️ Sessão Protegida</span>
+    <span class="sec-badge">📋 Auditoria Ativa</span>
+    <span class="sec-badge">🔒 Rotas Seguras</span>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+async function login() {
+  const u = document.getElementById('l-user').value.trim();
+  const p = document.getElementById('l-pass').value;
+  if (!u || !p) { toast('⚠️ Preencha usuário e senha.', 'warn'); return; }
+  try {
+    const r = await api('/api/auth/login', { method: 'POST', body: { usuario: u, senha: p } });
+    toast(`✅ Bem-vindo, ${r.usuario}! (${r.nivel})`);
+    setTimeout(() => window.location.href = '/admin/clientes', 1200);
+  } catch (err) {
+    toast('❌ Usuário ou senha incorretos! Tentativa registrada.', 'err');
+    document.getElementById('l-pass').value = '';
+    document.getElementById('l-pass').focus();
+  }
+}
+</script>
+{% endblock %}

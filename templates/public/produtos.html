@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block title %}Produtos — Chiminello{% endblock %}
+{% block extra_css %}
+<style>
+.prod-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(460px, 1fr)); gap: 28px; }
+.prod-card { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); transition: transform .3s, box-shadow .3s; }
+.prod-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+.prod-top { height: 220px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.prod-top img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+.prod-card:hover .prod-top img { transform: scale(1.05); }
+.prod-badge { position: absolute; top: 14px; right: 14px; background: rgba(139,69,19,.85); border: 1px solid rgba(255,255,255,.3); color: #fff; padding: 5px 13px; border-radius: 12px; font-size: .73em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; backdrop-filter: blur(4px); }
+.prod-body { padding: 24px; }
+.prod-title { font-size: 1.35em; color: var(--text); margin-bottom: 10px; }
+.prod-desc { color: #555; font-size: .9em; line-height: 1.7; margin-bottom: 18px; padding-bottom: 16px; border-bottom: 1px solid var(--cream-dark); }
+.specs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 16px; }
+.spec-item { background: #f9f4ef; border-radius: 7px; padding: 9px 13px; border-left: 3px solid var(--brick-light); }
+.spec-lbl { font-size: .7em; text-transform: uppercase; color: var(--brick); font-weight: 700; letter-spacing: .4px; }
+.spec-val { font-size: .86em; color: var(--text); margin-top: 3px; font-weight: 600; }
+.apps-lbl { font-size: .72em; text-transform: uppercase; color: var(--brick); font-weight: 700; letter-spacing: .4px; margin-bottom: 7px; }
+.app-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.app-tag { background: var(--brick); color: #fff; padding: 4px 12px; border-radius: 10px; font-size: .76em; font-weight: 600; }
+.intro-box { background: #fff; border-radius: var(--radius); padding: 24px 28px; border-left: 6px solid var(--brick-light); box-shadow: var(--shadow); margin-bottom: 36px; }
+.intro-box p { color: var(--text-mid); line-height: 1.8; font-size: .97em; }
+.larguras-section { background: var(--cream-dark); border-radius: var(--radius); padding: 22px 26px; margin-top: 36px; }
+.larguras-section h3 { font-family: 'Playfair Display',serif; color: var(--brick); margin-bottom: 14px; font-size: 1.15em; }
+.larguras-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+.largura-tag { background: var(--brick-deep); color: #fff; padding: 8px 18px; border-radius: 8px; font-size: .85em; font-weight: 600; }
+@media (max-width: 520px) { .prod-grid { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
+{% block body %}
+<div id="toast"></div>
+<nav class="pub-nav">
+  <a href="/">🏠 Home</a>
+  <a href="/historia">📖 História</a>
+  <a href="/produtos" class="active">🧱 Produtos</a>
+  <a href="/contato">📬 Contato</a>
+  <a href="/admin" class="nav-admin">🔐 Admin</a>
+</nav>
+
+<div class="page-header">
+  <h1>🧱 Nossos Produtos</h1>
+  <p>Tijolos de 6, 8, 9 e 12 furos — qualidade cerâmica de 75 anos</p>
+</div>
+
+<div class="section">
+  <div class="intro-box">
+    <p>Todos os nossos tijolos são produzidos com argila selecionada e queima controlada, garantindo resistência, acabamento uniforme e baixa absorção de água. Disponíveis em diversas larguras para atender qualquer tipo de obra — do pequeno residencial ao grande empreendimento.</p>
+  </div>
+
+  <div class="prod-grid">
+
+    <div class="prod-card">
+      <div class="prod-top">
+        <img src="/static/img/tijolo6.webp" alt="Tijolo 6 Furos Chiminello">
+        <span class="prod-badge">🏠 Vedação</span>
+      </div>
+      <div class="prod-body">
+        <h2 class="prod-title">Tijolo 6 Furos</h2>
+        <p class="prod-desc">Tijolo leve e econômico, ideal para paredes de vedação internas e externas. Seus 6 furos reduzem o peso da alvenaria e facilitam as instalações elétricas e hidráulicas.</p>
+        <div class="specs-grid">
+          <div class="spec-item"><div class="spec-lbl">Furos</div><div class="spec-val">6 furos</div></div>
+          <div class="spec-item"><div class="spec-lbl">Aplicação</div><div class="spec-val">Vedação</div></div>
+          <div class="spec-item"><div class="spec-lbl">Larguras</div><div class="spec-val">9 / 11,5 / 14 cm</div></div>
+          <div class="spec-item"><div class="spec-lbl">Comprimento</div><div class="spec-val">Sob consulta</div></div>
+        </div>
+        <div class="apps-lbl">Aplicações</div>
+        <div class="app-tags">
+          <span class="app-tag">Paredes Internas</span>
+          <span class="app-tag">Vedação</span>
+          <span class="app-tag">Residencial</span>
+        </div>
+        <a href="/contato" class="btn btn-primary btn-full" style="margin-top:16px">📬 Solicitar Orçamento</a>
+      </div>
+    </div>
+
+    <div class="prod-card">
+      <div class="prod-top">
+        <img src="/static/img/tijolo8.webp" alt="Tijolo 8 Furos Chiminello">
+        <span class="prod-badge">⭐ Mais Vendido</span>
+      </div>
+      <div class="prod-body">
+        <h2 class="prod-title">Tijolo 8 Furos</h2>
+        <p class="prod-desc">O tijolo mais versátil da nossa linha. Com 8 furos bem distribuídos, oferece excelente equilíbrio entre resistência e peso, sendo o preferido para alvenaria em geral em obras residenciais e comerciais.</p>
+        <div class="specs-grid">
+          <div class="spec-item"><div class="spec-lbl">Furos</div><div class="spec-val">8 furos</div></div>
+          <div class="spec-item"><div class="spec-lbl">Aplicação</div><div class="spec-val">Geral</div></div>
+          <div class="spec-item"><div class="spec-lbl">Larguras</div><div class="spec-val">9 / 11,5 / 14 cm</div></div>
+          <div class="spec-item"><div class="spec-lbl">Comprimento</div><div class="spec-val">Sob consulta</div></div>
+        </div>
+        <div class="apps-lbl">Aplicações</div>
+        <div class="app-tags">
+          <span class="app-tag">Alvenaria Geral</span>
+          <span class="app-tag">Residencial</span>
+          <span class="app-tag">Comercial</span>
+          <span class="app-tag">Industrial</span>
+        </div>
+        <a href="/contato" class="btn btn-primary btn-full" style="margin-top:16px">📬 Solicitar Orçamento</a>
+      </div>
+    </div>
+
+    <div class="prod-card">
+      <div class="prod-top">
+        <img src="/static/img/tijolo9.webp" alt="Tijolo 9 Furos Chiminello">
+        <span class="prod-badge">💪 Alta Resist.</span>
+      </div>
+      <div class="prod-body">
+        <h2 class="prod-title">Tijolo 9 Furos</h2>
+        <p class="prod-desc">Com 9 furos estrategicamente posicionados, este tijolo oferece resistência adicional mantendo boa leveza. Indicado para obras que exigem maior desempenho estrutural e melhor isolamento térmico e acústico.</p>
+        <div class="specs-grid">
+          <div class="spec-item"><div class="spec-lbl">Furos</div><div class="spec-val">9 furos</div></div>
+          <div class="spec-item"><div class="spec-lbl">Aplicação</div><div class="spec-val">Estrutural leve</div></div>
+          <div class="spec-item"><div class="spec-lbl">Larguras</div><div class="spec-val">9 / 11,5 / 14 cm</div></div>
+          <div class="spec-item"><div class="spec-lbl">Isolamento</div><div class="spec-val">Térmico / Acústico</div></div>
+        </div>
+        <div class="apps-lbl">Aplicações</div>
+        <div class="app-tags">
+          <span class="app-tag">Paredes Externas</span>
+          <span class="app-tag">Isolamento</span>
+          <span class="app-tag">Obras Mistas</span>
+        </div>
+        <a href="/contato" class="btn btn-primary btn-full" style="margin-top:16px">📬 Solicitar Orçamento</a>
+      </div>
+    </div>
+
+    <div class="prod-card">
+      <div class="prod-top">
+        <img src="/static/img/tijolo12.webp" alt="Tijolo 12 Furos Chiminello">
+        <span class="prod-badge">👑 Premium</span>
+      </div>
+      <div class="prod-body">
+        <h2 class="prod-title">Tijolo 12 Furos</h2>
+        <p class="prod-desc">Nosso tijolo de maior porte, com 12 furos para máximo desempenho em paredes de maior espessura. Proporciona excelente isolamento térmico e acústico, ideal para ambientes que exigem mais conforto e eficiência energética.</p>
+        <div class="specs-grid">
+          <div class="spec-item"><div class="spec-lbl">Furos</div><div class="spec-val">12 furos</div></div>
+          <div class="spec-item"><div class="spec-lbl">Aplicação</div><div class="spec-val">Alta performance</div></div>
+          <div class="spec-item"><div class="spec-lbl">Larguras</div><div class="spec-val">14 / 19 cm</div></div>
+          <div class="spec-item"><div class="spec-lbl">Isolamento</div><div class="spec-val">Superior</div></div>
+        </div>
+        <div class="apps-lbl">Aplicações</div>
+        <div class="app-tags">
+          <span class="app-tag">Paredes Grossas</span>
+          <span class="app-tag">Conforto Térmico</span>
+          <span class="app-tag">Alto Padrão</span>
+        </div>
+        <a href="/contato" class="btn btn-primary btn-full" style="margin-top:16px">📬 Solicitar Orçamento</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="larguras-section">
+    <h3>📐 Larguras Disponíveis</h3>
+    <p style="color:var(--text-mid);font-size:.92em;margin-bottom:14px">Todos os modelos estão disponíveis nas seguintes larguras. Comprimentos sob consulta.</p>
+    <div class="larguras-grid">
+      <span class="largura-tag">9 cm</span>
+      <span class="largura-tag">11,5 cm</span>
+      <span class="largura-tag">14 cm</span>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <p>© 2025 <span>Indústrias de Tijolos Chiminello</span> — Todos os direitos reservados</p>
+</footer>
+{% endblock %}

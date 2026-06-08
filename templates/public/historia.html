@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Nossa História — Chiminello{% endblock %}
+{% block body %}
+<div id="toast"></div>
+<nav class="pub-nav">
+  <a href="/">🏠 Home</a>
+  <a href="/historia" class="active">📖 História</a>
+  <a href="/produtos">🧱 Produtos</a>
+  <a href="/contato">📬 Contato</a>
+  <a href="/admin" class="nav-admin">🔐 Admin</a>
+</nav>
+
+<div class="page-header">
+  <h1>📖 Nossa História</h1>
+  <p>Mais de 75 anos de tradição familiar construindo o Brasil</p>
+</div>
+
+<div class="section">
+  <h2 class="sec-title">Uma história construída com trabalho</h2>
+  <div class="sec-bar"></div>
+
+  <!-- Timeline real -->
+  <div style="position:relative;padding-left:28px;border-left:4px solid var(--brick-light);margin-bottom:44px">
+
+    <div style="margin-bottom:30px;position:relative">
+      <div style="position:absolute;left:-36px;top:6px;width:14px;height:14px;background:var(--brick-light);border-radius:50%;border:3px solid var(--cream);box-shadow:0 0 0 3px rgba(210,105,30,.3)"></div>
+      <div style="font-size:1.2em;font-weight:700;color:var(--brick);font-family:'Playfair Display',serif">🏭 1950 — Fundação por Ernesto Antônio Chiminello</div>
+      <div style="background:#fff;padding:16px 18px;border-radius:8px;margin-top:8px;box-shadow:var(--shadow);color:var(--text-mid);font-size:.95em;line-height:1.8">
+        A Indústria de Tijolos Chiminello iniciou suas atividades em <strong>1950</strong>, fundada por <strong>Ernesto Antônio Chiminello</strong>. Seu legado foi tão significativo para a comunidade que uma rua da cidade recebeu seu nome em sua homenagem — reconhecimento justo de uma vida dedicada ao trabalho e à construção da região.
+      </div>
+    </div>
+
+    <div style="margin-bottom:30px;position:relative">
+      <div style="position:absolute;left:-36px;top:6px;width:14px;height:14px;background:var(--brick-light);border-radius:50%;border:3px solid var(--cream);box-shadow:0 0 0 3px rgba(210,105,30,.3)"></div>
+      <div style="font-size:1.2em;font-weight:700;color:var(--brick);font-family:'Playfair Display',serif">👨‍🔧 Segunda Geração — José "Véio Chico" Chiminello</div>
+      <div style="background:#fff;padding:16px 18px;border-radius:8px;margin-top:8px;box-shadow:var(--shadow);color:var(--text-mid);font-size:.95em;line-height:1.8">
+        A empresa passou para as mãos do filho <strong>José Chiminello</strong>, carinhosamente chamado de <em>"Véio Chico"</em> por todos que o conheciam. Ele dedicou sua vida inteira à olaria e à produção de tijolos de qualidade, mantendo os valores do pai e expandindo a reputação da família. Infelizmente, José faleceu em um acidente enquanto transportava barro para a produção — sua história de dedicação e amor pelo trabalho continua sendo a maior inspiração da família Chiminello.
+      </div>
+    </div>
+
+    <div style="margin-bottom:30px;position:relative">
+      <div style="position:absolute;left:-36px;top:6px;width:14px;height:14px;background:var(--brick-light);border-radius:50%;border:3px solid var(--cream);box-shadow:0 0 0 3px rgba(210,105,30,.3)"></div>
+      <div style="font-size:1.2em;font-weight:700;color:var(--brick);font-family:'Playfair Display',serif">🏆 Hoje — Dirceu & Jose Lineu Chiminello</div>
+      <div style="background:#fff;padding:16px 18px;border-radius:8px;margin-top:8px;box-shadow:var(--shadow);color:var(--text-mid);font-size:.95em;line-height:1.8">
+        A tradição segue viva nas mãos dos irmãos <strong>Dirceu Chiminello</strong> e <strong>Jose Lineu Chiminello</strong>, que mantêm os mesmos valores de qualidade, honestidade e compromisso com os clientes que guiaram o avô e o pai. Mais do que fabricar tijolos, a família constrói histórias, preserva uma tradição e ajuda a desenvolver a região há mais de <strong>75 anos</strong>.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MVV -->
+  <h2 class="sec-title">Missão, Visão e Valores</h2>
+  <div class="sec-bar"></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;margin-bottom:44px">
+    <div style="background:#fff;border-radius:var(--radius);padding:26px;border-top:5px solid var(--brick-light);box-shadow:var(--shadow)">
+      <h3 style="color:var(--brick);font-size:1.15em;margin-bottom:12px">🎯 Missão</h3>
+      <p style="color:#555;font-size:.92em;line-height:1.75">Produzir tijolos cerâmicos de excelente qualidade, com responsabilidade e compromisso familiar, contribuindo para o desenvolvimento da construção civil e para a satisfação plena de cada cliente.</p>
+    </div>
+    <div style="background:#fff;border-radius:var(--radius);padding:26px;border-top:5px solid var(--brick-light);box-shadow:var(--shadow)">
+      <h3 style="color:var(--brick);font-size:1.15em;margin-bottom:12px">🔭 Visão</h3>
+      <p style="color:#555;font-size:.92em;line-height:1.75">Manter viva a tradição familiar de mais de 75 anos, sendo reconhecidos pela excelência dos nossos produtos e pelo atendimento próximo e honesto que só uma empresa familiar pode oferecer.</p>
+    </div>
+    <div style="background:#fff;border-radius:var(--radius);padding:26px;border-top:5px solid var(--brick-light);box-shadow:var(--shadow)">
+      <h3 style="color:var(--brick);font-size:1.15em;margin-bottom:12px">⭐ Valores</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:9px;margin-top:10px">
+        {% for v in ["Tradição Familiar","Qualidade","Honestidade","Comprometimento","Respeito","Trabalho Duro"] %}
+        <span style="background:linear-gradient(135deg,var(--brick-light),var(--brick));color:#fff;padding:6px 14px;border-radius:16px;font-size:.82em;font-weight:600">{{ v }}</span>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Legado -->
+  <h2 class="sec-title">Nosso Legado</h2>
+  <div class="sec-bar"></div>
+  <div style="background:#fff;border-radius:var(--radius);padding:28px;border-left:6px solid var(--brick-light);box-shadow:var(--shadow)">
+    <p style="color:var(--text-mid);line-height:1.9;margin-bottom:14px;font-size:.97em">Mais do que fabricar tijolos, a <strong>Indústria de Tijolos Chiminello</strong> constrói histórias. Cada tijolo que sai de nossa olaria carrega décadas de conhecimento passado de geração em geração — das mãos de Ernesto para José, de José para Dirceu e Jose Lineu.</p>
+    <p style="color:var(--text-mid);line-height:1.9;font-size:.97em">Preservamos uma tradição familiar e ajudamos a desenvolver a região há mais de sete décadas. Quando você escolhe um tijolo Chiminello, está escolhendo a história de uma família que apostou tudo na qualidade e no trabalho honesto.</p>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <p>© 2025 <span>Indústrias de Tijolos Chiminello</span> — Todos os direitos reservados</p>
+</footer>
+{% endblock %}
